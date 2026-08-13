@@ -1,0 +1,4 @@
+interface:
+  display_name: "Media Archive"
+  short_description: "Archive media links into NotebookLM-ready notes"
+  default_prompt: "Use $media-archive to archive this video or podcast link and create a grounded Markdown note."

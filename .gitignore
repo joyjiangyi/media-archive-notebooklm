@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.DS_Store
+.notebooklm/
+storage_state.json
+auth.json
+cookies.json

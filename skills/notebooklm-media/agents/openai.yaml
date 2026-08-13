@@ -1,0 +1,4 @@
+interface:
+  display_name: "NotebookLM Media"
+  short_description: "Import media sources and generate grounded notes"
+  default_prompt: "Use $notebooklm-media to import this media source and generate a Chinese structured note."

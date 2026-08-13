@@ -1,0 +1,4 @@
+interface:
+  display_name: "Xiaoyuzhou Media"
+  short_description: "Extract Xiaoyuzhou episode metadata and audio URLs"
+  default_prompt: "Use $xiaoyuzhou-media to extract metadata and the audio URL from this Xiaoyuzhou episode."
