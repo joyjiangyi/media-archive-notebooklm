@@ -1,16 +1,27 @@
 # Media Archive × NotebookLM
 
-把公开视频或播客链接变成可复用的 Markdown 知识笔记。这个仓库把三个 Codex Skills 组合成一条可降级的工作流：
+把公开视频和播客链接变成可复用的 Markdown 知识笔记。YouTube、Bilibili、小红书等视频链接，以及小宇宙、RSS 等播客链接，都可以从同一个 `media-archive` 入口开始处理。
+
+这不是只为播客设计的工具：**Media Archive 同时包含 Video Archive 和 Podcast Archive。** 仓库把三个 Codex Skills 组合成一条可降级的工作流：
 
 ```text
-媒体链接 → 平台识别 → 小宇宙元数据/音频直链 → NotebookLM → 结构化 Markdown 笔记
+                    ┌─ 视频：YouTube 等原始链接 ─────────┐
+媒体链接 → 类型识别 ┤                                  ├→ NotebookLM → Markdown 归档
+                    └─ 播客：原始链接 / 小宇宙音频直链 ─┘
 ```
+
+## 支持的媒体
+
+| 类型 | 常见来源 | 处理方式 |
+|---|---|---|
+| 视频 | YouTube、Bilibili、小红书及其他公开视频链接 | 优先把原始视频链接交给 NotebookLM；平台不受支持时，使用可验证的字幕、描述或文本兜底 |
+| 播客 | 小宇宙、RSS、公开音频及其他播客链接 | 优先使用原始节目页；小宇宙页面不受支持时可提取公开音频链接，再以 Show Notes 文本兜底 |
 
 ## 包含的 Skills
 
 - `media-archive`：统一入口与工作流编排
-- `xiaoyuzhou-media`：解析小宇宙公开单集页、Show Notes 和公开音频链接
-- `notebooklm-media`：导入 NotebookLM，并在原链接不受支持时自动切换到音频或文本兜底
+- `notebooklm-media`：导入视频、播客、音频、网页或文本来源，并生成有来源约束的笔记
+- `xiaoyuzhou-media`：小宇宙播客的可选适配器，负责解析单集页、Show Notes 和公开音频链接
 
 ## 安装
 
@@ -24,7 +35,13 @@ python3 -m pip install "notebooklm-py[browser]"
 notebooklm login
 ```
 
-重启 Codex 后即可使用：
+重启 Codex 后即可使用。视频示例：
+
+```text
+用 $media-archive 存档这个 YouTube 视频，并用 NotebookLM 生成中文深度笔记：<YOUTUBE_URL>
+```
+
+播客示例：
 
 ```text
 用 $media-archive 存档这个小宇宙节目，并用 NotebookLM 生成中文深度笔记：<URL>
@@ -37,12 +54,13 @@ python3 skills/xiaoyuzhou-media/scripts/extract_xiaoyuzhou.py \
   "https://www.xiaoyuzhoufm.com/episode/<EPISODE_ID>"
 ```
 
-## 降级机制
+## 工作流与降级机制
 
-1. NotebookLM 先导入原始节目页。
-2. 原始页不受支持时，改用公开音频 URL。
-3. 音频仍失败时，导入元数据与 Show Notes 生成的 Markdown。
-4. 所有输出必须标注证据来源和局限，不虚构转录、引语或时间戳。
+1. Media Archive 先判断来源是视频还是播客，并保留原始链接与已确认元数据。
+2. 视频优先导入原始链接；若平台不受支持，则使用来源中可验证的字幕、描述或文本。
+3. 播客优先导入原始节目页；小宇宙页面不受支持时，改用提取出的公开音频 URL。
+4. 音频仍失败时，导入元数据与 Show Notes 生成的 Markdown。
+5. 所有输出必须标注实际导入路径、证据来源和局限，不虚构转录、引语或时间戳。
 
 ## 隐私与版权
 
