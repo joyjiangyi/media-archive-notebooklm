@@ -12,7 +12,7 @@ Use the `notebooklm` CLI supplied by the open-source `notebooklm-py` project. Th
 ```bash
 python3 -m pip install "notebooklm-py[browser]"
 notebooklm login
-notebooklm status
+notebooklm auth check
 notebooklm list --json
 ```
 
@@ -33,7 +33,18 @@ Use explicit notebook IDs in every automation command.
 
 ## Analysis
 
-Use:
+Use the video's structure for a single episode unless the user requests another structure:
+
+```text
+核心主题
+分章节概要（每章节时间段）
+3-5 个关键观点
+可行动建议
+适合关联的知识库标签
+要求：不要编造来源之外的事实、数据或引语。
+```
+
+Only add chapter time ranges when the imported source contains verifiable timestamps. Use:
 
 ```bash
 notebooklm ask "<GROUNDED_PROMPT>" --notebook <NB_ID> -s <SOURCE_ID> --json
@@ -50,7 +61,7 @@ notebooklm source fulltext <SOURCE_ID> --notebook <NB_ID> --json
 
 ## Autonomy
 
-Run status, list, create, source-add, source-list, fulltext, and ordinary ask commands without extra confirmation. Ask before generation commands that may take substantial time, downloads that write artifacts, or any delete command.
+Run auth-check, list, create, source-add, source-list, fulltext, and ordinary ask commands without extra confirmation. Ask before login, generation commands that may take substantial time, downloads that write artifacts, or any delete command.
 
 ## Result
 

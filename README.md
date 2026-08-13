@@ -1,73 +1,152 @@
 # Media Archive × NotebookLM
 
-把公开视频和播客链接变成可复用的 Markdown 知识笔记。YouTube、Bilibili、小红书等视频链接，以及小宇宙、RSS 等播客链接，都可以从同一个 `media-archive` 入口开始处理。
-
-这不是只为播客设计的工具：**Media Archive 同时包含 Video Archive 和 Podcast Archive。** 仓库把三个 Codex Skills 组合成一条可降级的工作流：
+这是 JioJioJoy《NotebookLM 工作流保姆级教程》的公开配套 Skill 包。它把视频里已经跑通的流程封装成一个可复用入口：
 
 ```text
-                    ┌─ 视频：YouTube 等原始链接 ─────────┐
-媒体链接 → 类型识别 ┤                                  ├→ NotebookLM → Markdown 归档
-                    └─ 播客：原始链接 / 小宇宙音频直链 ─┘
+调取小宇宙近 30 天收听记录
+        ↓
+跟你确认哪些需要处理
+        ↓
+逐集导入 NotebookLM 做深度分析
+        ↓
+汇总为 Markdown 笔记保存到 Obsidian
 ```
 
-## 支持的媒体
+Media Archive 同时支持 **video + podcast**：视频中用“小宇宙近 30 天”演示批量播客流程；对 YouTube、Bilibili 等公开视频或单条播客链接，也可以从同一入口导入 NotebookLM 生成有来源约束的笔记。
 
-| 类型 | 常见来源 | 处理方式 |
-|---|---|---|
-| 视频 | YouTube、Bilibili、小红书及其他公开视频链接 | 优先把原始视频链接交给 NotebookLM；平台不受支持时，使用可验证的字幕、描述或文本兜底 |
-| 播客 | 小宇宙、RSS、公开音频及其他播客链接 | 优先使用原始节目页；小宇宙页面不受支持时可提取公开音频链接，再以 Show Notes 文本兜底 |
+### 为什么这套组合更节省 Agent 上下文和 Token
 
-## 包含的 Skills
+长视频或长播客无需把完整逐字稿塞进当前 Agent 对话。Media Archive 会先把媒体交给 NotebookLM 建立独立来源，再围绕这个来源定向提问并只取回所需结果。这样可以减少长文本对当前上下文的占用，把 Token 更集中地用在分析、判断和输出上。实际节省程度取决于来源长度、提问方式和 Agent 环境，本项目不承诺固定比例。
 
-- `media-archive`：统一入口与工作流编排
-- `notebooklm-media`：导入视频、播客、音频、网页或文本来源，并生成有来源约束的笔记
-- `xiaoyuzhou-media`：小宇宙播客的可选适配器，负责解析单集页、Show Notes 和公开音频链接
+## 成片里的安装顺序
 
-## 安装
+### 1. 安装 Skill Creator
 
-需要 Python 3.10+。NotebookLM 集成依赖开源项目 [notebooklm-py](https://github.com/teng-lin/notebooklm-py)。
+把下面这句原文发给你当前使用的 Agent：
+
+```text
+请为你当前所在的 Agent 环境安装或启用「Skill Creator」。让我以后能够创建、修改、验证符合 Agent Skills 开放规范的 Skill。
+```
+
+### 2. 安装 NotebookLM Skill
+
+```text
+请帮我安装 notebooklm skill，地址：
+https://github.com/teng-lin/notebooklm-py
+```
+
+安装后完成 Google 登录和授权检查：
+
+```bash
+notebooklm login
+notebooklm auth check
+```
+
+### 3. 找到并安装小宇宙历史记录工具
+
+成片里先让 Agent 搜现成工具，而不是自己重新开发：
+
+```text
+帮我搜索能导出小宇宙最近 30 天完播记录和链接的公开 Skill 或工具
+```
+
+确认来源和权限后：
+
+```text
+帮我安装 xiaoyuzhou-history，并引导我完成登录授权。
+```
+
+> `xiaoyuzhou-history` 会涉及账号登录。安装前请先审核它的来源、代码和所需权限；不要把手机号、验证码、Cookie 或会话文件提交到仓库。本仓库不捆绑它的第三方代码。
+
+### 4. 安装这个配套 Skill 包
 
 ```bash
 git clone https://github.com/joyjiangyi/media-archive-notebooklm.git
 cd media-archive-notebooklm
 ./install.sh
-python3 -m pip install "notebooklm-py[browser]"
-notebooklm login
 ```
 
-重启 Codex 后即可使用。视频示例：
+如果本地已经存在同名 Skill，安装脚本会拒绝覆盖。请先审查差异，再决定是否使用 `./install.sh --force`；强制安装前会自动备份原目录。
+
+## 先跑通一集：成片原文
+
+先用一条小宇宙链接验证 NotebookLM 的导入和分析链路：
 
 ```text
-用 $media-archive 存档这个 YouTube 视频，并用 NotebookLM 生成中文深度笔记：<YOUTUBE_URL>
+帮我把这期播客
+🛸 https://www.xiaoyuzhoufm.com/episode/6a719a98ab3a91c24a0f95e2 导入
+NotebookLM，按以下框架做深度分析，输出中文笔记：
+核心主题
+分章节概要（每章节时间段）
+3-5 个关键观点
+可行动建议
+适合关联的知识库标签
+要求：不要编造来源之外的事实、数据或引语。
 ```
 
-播客示例：
+如果来源里没有可验证的时间戳，Skill 会标明限制，而不会自行编造。
+
+## 跑完整流程
+
+完成登录后，可先单独检查近 30 天的记录：
 
 ```text
-用 $media-archive 存档这个小宇宙节目，并用 NotebookLM 生成中文深度笔记：<URL>
+帮我列出小宇宙最近 30 天听过的播客
 ```
 
-单独提取小宇宙公开音频链接：
+或使用成片中的完整工作流指令：
+
+```text
+请使用 xiaoyuzhou-history skill 调取我近 30 天的收听记录，跟我确认哪些需要处理。确认后，把每一集的链接通过 notebooklm skill 导入我的笔记本，做深度分析，最后把每一条播客分析结果汇总成一份 Markdown 笔记，保存到 Obsidian。
+```
+
+安装本仓库后，可以直接触发同一套流程：
+
+```text
+清理小宇宙最近听过的播客
+```
+
+Media Archive 必须先列出候选节目并等你确认；在你明确选择之前，不会批量导入 NotebookLM。
+
+## 成片里的 Skill Creator 封装原文
+
+```text
+请使用 Skill Creator，帮我把刚才这套流程打包成一个新的 skill，名字叫 media-archive。它的功能是：调取小宇宙近 30 天收听记录 → 导入 NotebookLM 深度分析 → 汇总成 Markdown 笔记保存到 Obsidian。
+```
+
+## 附加能力：单集公开链接适配
+
+仓库仍包含 `xiaoyuzhou-media`，用于解析一条公开小宇宙单集页的元数据、Show Notes 和公开音频 URL。这是 NotebookLM 不接受原始单集页时的兼容降级，不是成片中“近 30 天听过记录”的替代品。
 
 ```bash
 python3 skills/xiaoyuzhou-media/scripts/extract_xiaoyuzhou.py \
   "https://www.xiaoyuzhoufm.com/episode/<EPISODE_ID>"
 ```
 
-## 工作流与降级机制
+## 处理单条视频或播客
 
-1. Media Archive 先判断来源是视频还是播客，并保留原始链接与已确认元数据。
-2. 视频优先导入原始链接；若平台不受支持，则使用来源中可验证的字幕、描述或文本。
-3. 播客优先导入原始节目页；小宇宙页面不受支持时，改用提取出的公开音频 URL。
-4. 音频仍失败时，导入元数据与 Show Notes 生成的 Markdown。
-5. 所有输出必须标注实际导入路径、证据来源和局限，不虚构转录、引语或时间戳。
+成片重点演示小宇宙批量工作流，但 Media Archive 不仅限于小宇宙。对一条公开视频或播客链接，可直接说：
 
-## 隐私与版权
+```text
+用 $media-archive 存档这条视频或播客，通过 NotebookLM 生成中文深度笔记：<URL>
+```
 
-- 仓库不包含也不会读取你的 NotebookLM Cookie、浏览器配置或认证文件。
-- 仅处理公开来源或你有权访问的材料。
-- 音频直链用于授权范围内的个人分析，不代表获得再分发许可。
+Skill 会保留原始链接和已确认元数据，先尝试导入原始媒体来源，再根据可验证来源生成笔记并说明限制。
+
+## 仓库内容
+
+- `media-archive`：成片主流程的统一入口与人工确认门
+- `notebooklm-media`：NotebookLM 登录、导入、深度分析与结果回传
+- `xiaoyuzhou-media`：单个公开小宇宙链接的可选适配器
+- `skills/media-archive/references/video-prompts.md`：成片里出现的提示词原文集合
+
+## 隐私、版权与限制
+
+- 仅处理公开来源或你有权访问的内容。
+- 仓库不包含也不会上传 NotebookLM Cookie、小宇宙登录信息、浏览器配置或 Obsidian 个人库路径。
+- 公开音频 URL 仅可在授权范围内用于个人分析，不代表获得再分发许可。
 - `notebooklm-py` 使用非官方 NotebookLM 接口，Google 更新后可能需要升级上游版本。
+- 登录、删除、覆盖、长时间批量任务和下载产物均需先获得你的明确确认。
 
 ## 验证
 
