@@ -14,11 +14,37 @@
 
 Media Archive 同时支持 **video + podcast**：视频中用“小宇宙近 30 天”演示批量播客流程；对 YouTube、Bilibili 等公开视频或单条播客链接，也可以从同一入口导入 NotebookLM 生成有来源约束的笔记。
 
+## 最快用法：把 GitHub 地址直接发给 Agent
+
+如果你只想直接使用成品，不需要按视频重新封装一遍。把下面这段发给 Codex 或其他支持 Agent Skills 的 Agent：
+
+```text
+请帮我安装这个公开 Skill：
+https://github.com/joyjiangyi/media-archive-notebooklm
+
+安装后请检查并引导我完成以下初始化：
+1. 安装或确认 notebooklm skill 可用，并运行 notebooklm login 与 notebooklm auth check。
+2. 安装或确认 xiaoyuzhou-history 可用，并引导我完成小宇宙手机号/验证码登录。
+3. 检查 media-archive 已成功加载。
+
+完成后先不要批量处理，等我说“清理小宇宙最近听过的播客”再开始；开始后必须先列出候选节目并让我确认。
+```
+
+初始化完成后，平时只需说：
+
+```text
+清理小宇宙最近听过的播客
+```
+
+> Agent 如果要安装第三方 `xiaoyuzhou-history`，先让它说明来源、权限和审查结果。手机号、验证码、Cookie 和会话文件不应被写入 Skill 或上传 GitHub。
+
 ### 为什么这套组合更节省 Agent 上下文和 Token
 
 长视频或长播客无需把完整逐字稿塞进当前 Agent 对话。Media Archive 会先把媒体交给 NotebookLM 建立独立来源，再围绕这个来源定向提问并只取回所需结果。这样可以减少长文本对当前上下文的占用，把 Token 更集中地用在分析、判断和输出上。实际节省程度取决于来源长度、提问方式和 Agent 环境，本项目不承诺固定比例。
 
-## 成片里的安装顺序
+## 自己封装：成片里的安装顺序
+
+下面是视频演示的教学路线：先分别跑通基础 Skill，再用 Skill Creator 封装为 Media Archive。如果你已经按上一节安装公开包，不需要重复执行这一遍。
 
 ### 1. 安装 Skill Creator
 

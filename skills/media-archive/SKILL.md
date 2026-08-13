@@ -30,6 +30,8 @@ Before the first run, verify rather than assume:
 
 If a prerequisite is missing, stop at that step and guide the user. Never expose, echo, store, or commit a phone number, verification code, cookie, session file, browser profile, token, or NotebookLM auth file.
 
+When onboarding a newly installed public bundle, guide the user through these prerequisites in order. Explain the source and permissions before installing a third-party `xiaoyuzhou-history` tool. Login and authentication require the user's participation. After setup, do not start batch processing until the user explicitly triggers the workflow; the confirmation gate below still applies.
+
 ## Recent-history workflow
 
 ### 1. Fetch candidates
